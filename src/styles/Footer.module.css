@@ -1,0 +1,15 @@
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    background-color: #87A6F5;
+    /*background-color: #5650FA;
+    position: fixed;*/
+    border-top: 1px solid #5877CC;
+    font-size: 0.75em;
+    /*position: fixed;*/
+}

@@ -1,0 +1,19 @@
+.divContainer {
+    flex: 1;
+    display: grid;
+    /*grid-template-columns: 1fr 1fr;*/
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    background-color: var(--bg-color-divContainer);
+    color: var(--color-divContainer);
+    min-height: 80vh;
+    height: auto;
+    width: 90%;
+    min-width: auto;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+    border-radius: 5vh;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}

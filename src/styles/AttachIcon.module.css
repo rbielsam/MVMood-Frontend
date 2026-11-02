@@ -1,0 +1,13 @@
+.attachIcon {
+    max-height: 30px;
+    max-width: 30px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+#attachIconId {
+    max-height: 30px;
+    max-width: 30px;
+    cursor: pointer;
+    margin-top: 15px;
+}

@@ -1,0 +1,32 @@
+.rightSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    min-width: 0;
+    margin: 0;
+    /*border: 2px solid red;*/
+}
+
+.formContent {
+    background-color: var(--bg-color);
+    border-radius: 3vh;
+    align-items: center;
+    height: auto;
+    min-height: 200px;
+    width: 60%;
+    max-width: 400px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+/*.formContent .logoSignUp {
+    align-self: center;
+}*/

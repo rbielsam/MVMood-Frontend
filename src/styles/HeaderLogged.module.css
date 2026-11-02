@@ -1,0 +1,116 @@
+.topbar {
+    height: 70px;
+    background-color: var(--bg-color-HeaderLogged);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.languageThemeContainer {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    /*border: 1px solid blue;*/
+}
+/*.dataLoggedContainer {
+    display: flex;
+}*/
+
+.linkHeaderNickImg {
+    display:flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+
+.dataLoggedUser {
+    font-weight: bold;
+    cursor: pointer;
+    padding-bottom: 1px;
+    padding-top: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.dataLoggedContainer:hover {
+    background-color: #F0F0F0;
+    border: 1px solid #E5E5E5;
+    border-radius: 5px;
+}
+
+.headerProfileImg {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+
+/*.languageThemeContainer {
+    display: flex;
+    width: 90vw;
+    justify-content: end;
+    gap: 10px;
+    margin-top: 20px;
+    position: relative;
+    border: 1px solid blue;
+}*/
+
+/*.languageMenu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 0;
+    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.languageMenu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.languageMenu button:hover {
+    background-color: #f0f0f0;
+}
+
+.languageMenu button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.dark .languageMenu {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+.dark .languageMenu button:hover {
+    background-color: #3a3a3a;
+}
+
+.dark .languageMenu button.active {
+    background-color: #007bff;
+    color: white;
+}*/

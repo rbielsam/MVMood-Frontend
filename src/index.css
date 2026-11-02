@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+    --bg-color: #FFF;
+    --bg-color-divContainer: #F2F2F2;
+    --bg-color-HeaderLogged: #ffffff;
+    --color-button: #000000;
+    --bg-color-imputs: #C7DBFC;
+    --bg-color-termConditions: #FFF;
+    --bg-color-languageMenu: #FFF;
+    --border-languageMenu: 1px solid black;
+}
+
+.dark {
+    --bg-color: #333333;
+    --bg-color-divContainer: #2A2A2A;
+    --color-divContainer: #FFF; /*#7Ba6FF*/
+    --bg-color-HeaderLogged: #1E1E1E;
+    --border-color-HeaderLogged: #333;
+    --bg-color-termConditions: #87A6F5;
+    --color-button: #000000;
+    --bg-color-languageMenu: #2A2A2A;
+    --color-languageMenu: #FFF;
+    --border-languageMenu: 1px solid white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Carlito';
+    /*gap: 30px;*/
+}
+
+.container {
+    /*background-color: var(--bg-color);*/
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.imputs {
+    background-color: var(--bg-color-imputs);
+    margin: 10px;
+    height: 2.5rem;
+    width: 80%;
+    padding: 5px;
+    border: 1px solid #5877CC;
+    border-radius: 3vh;
+}
+
+.imputs:hover {
+    border: 1px solid #203C8F;
+}
+
+.dark .languageMenu li:hover {
+    background-color: #4A4A4A;
+}
+
+/*.pLogin {
+    font-size: 0.80em;
+    border: 2px solid red;
+}*/
+
+a {
+    font-size: 0.75em;
+    color: var(--color-divContainer);
+}
+
+.error {
+    color: red;
+}
+
+
+/* CONTROLADOS */
+
+/* HeaderLogged */
+/*.topbar .brand img {
+    max-height: 50px;
+    width: auto;
+    height: auto;
+}
+
+.topbar .headerContent img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}*/
