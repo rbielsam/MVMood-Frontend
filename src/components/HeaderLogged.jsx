@@ -9,7 +9,7 @@ import styles from "../styles/HeaderLogged.module.css";
 import styleLanguageIcon from "../styles/LanguageIcon.module.css";
 import ImgLogo from "./ImgLogo";
 import { UserContext } from "../contexts/user.context";
-import userPic from "../assets/settingsprofile/user.png";
+import defaultAvatar from "../assets/icons/default-avatar.svg";
 import { Link } from "react-router-dom";
 
 
@@ -49,7 +49,7 @@ export default function Header ({ children }) {
                 <div className={`${styles.dataLoggedContainer} dataLoggedContainer`}>
                         {/*<p>{localStorage.getItem("nickname")}</p>*/}
                         <Link className={styles.linkHeaderNickImg} to="/profile">
-                            <img src={user.foto_perfil ? `${API_URL}/storage/${user.foto_perfil}`: userPic}
+                            <img src={user.foto_perfil ? (user.foto_perfil.startsWith('http') ? user.foto_perfil : `${API_URL}/storage/${user.foto_perfil}`) : defaultAvatar}
                                 alt="FotoPerfil"
                                 className={styles.headerProfileImg}
                             />

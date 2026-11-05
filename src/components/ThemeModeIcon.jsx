@@ -1,4 +1,5 @@
-import modoOscuro from "../assets/header/modoOscuro.png";
+import sunIcon from "../assets/icons/theme-sun.svg";
+import moonIcon from "../assets/icons/theme-moon.svg";
 import '../index.css';
 import styles from '../styles/ThemeModeIcon.module.css';
 import { useEffect, useState } from "react";
@@ -27,7 +28,7 @@ export default function ThemeModeIcon () {
 
     return (
         <>
-            <img onClick={changeTheme} className={styles.themeModeIcon} src={modoOscuro} alt="Theme mode" />
+            <img onClick={changeTheme} className={styles.themeModeIcon} src={isDark ? moonIcon : sunIcon} alt="Theme mode" />
         </>
     );
 }

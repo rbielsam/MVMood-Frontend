@@ -4,7 +4,7 @@ import { useState, useContext, useEffect } from 'react';
 import Button from './Button';
 import { LanguageContext } from '../contexts/language.context';
 import { UserContext } from "../contexts/user.context";
-import userPic from "../assets/settingsprofile/user.png";
+import defaultAvatar from "../assets/icons/default-avatar.svg";
 import AttachIcon from './AttachIcon';
 import { Link } from "react-router-dom";
 
@@ -146,7 +146,7 @@ export default function Post({ post, updated, deleted, del, update, publicacione
             ) : (
                 <div className="post-content">
                     <Link className={styles.linkPostNickImg} to="/profile">
-                        <img src={post.user.foto_perfil ? `${API_URL}/storage/${post.user.foto_perfil}`: userPic}
+                        <img src={post.user.foto_perfil ? `${API_URL}/storage/${post.user.foto_perfil}`: defaultAvatar}
                         alt="FotoPerfil"
                         className={styles.postProfileImg} />
 
@@ -196,7 +196,7 @@ export default function Post({ post, updated, deleted, del, update, publicacione
                             commentList.map((comment) => (
                                 <div key={comment.uuid} className="comment-item">
                                     <div className='comment-nickname'>
-                                        <Link className={styles.linkPostNickImg} to="/profile"><img src={user.foto_perfil ? `${API_URL}/storage/${user.foto_perfil}`: userPic}
+                                        <Link className={styles.linkPostNickImg} to="/profile"><img src={user.foto_perfil ? (user.foto_perfil.startsWith('http') ? user.foto_perfil : `${API_URL}/storage/${user.foto_perfil}`) : defaultAvatar}
                                             alt="FotoPerfil"
                                             className={styles.postProfileImg} />
                                         </Link>

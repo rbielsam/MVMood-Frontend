@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 import TermConditions from '../components/TermConditions';
 import { LanguageContext } from '../contexts/language.context';
 import { UserContext } from '../contexts/user.context';
-import userPic from "../assets/settingsprofile/user.png";
+import defaultAvatar from "../assets/icons/default-avatar.svg";
 
 
 export default function ProfilePage() {
@@ -19,7 +19,6 @@ export default function ProfilePage() {
     const {translations, lang, setLang} = useContext(LanguageContext);
     const language = lang.ProfilePage;
 
-    const [profilePic, setProfilePic] = useState({userPic});
     const [nickname, setNickname] = useState("");
     const [isEditingNickname, setIsEditingNickname] = useState(false);
     const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -28,6 +27,7 @@ export default function ProfilePage() {
     const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
     const [passwordMessage, setPasswordMessage] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [uploadingPic, setUploadingPic] = useState(false);
 
     useEffect(() => {
         setNickname(user.nickname);
@@ -39,11 +39,19 @@ export default function ProfilePage() {
 
         if (!foto_perfil) return;
 
+        setUploadingPic(true);
+        setPasswordError("");
+
         const formData = new FormData();
         formData.append("foto_perfil", foto_perfil);
 
         const data = await updateNickname(formData);
-        
+
+        setUploadingPic(false);
+
+        if (!data) {
+            setPasswordError(language.errorServerConnectionProfile || "Error al subir la imagen");
+        }
     };
 
     const handleNicknameChange = async (e) => {
@@ -138,13 +146,12 @@ export default function ProfilePage() {
                         <div className="profile-card">
                             <div className="profile-picture-section">
                                 <div className="profile-picture-container">
-                                    <img className="profile-picture" src={user.foto_perfil ? `http://localhost:8000/storage/${user.foto_perfil}` : userPic} />
+                                    <img className="profile-picture" src={user.foto_perfil ? (user.foto_perfil.startsWith('http') ? user.foto_perfil : `${API_URL}/storage/${user.foto_perfil}`) : defaultAvatar} alt="Foto de perfil" />
                                     <div className="profile-picture-overlay">
                                         <label htmlFor="profile-pic-input" className="change-photo-btn">
                                             <span>📷</span>
                                         </label>
                                         <input
-                                            className='imputs'
                                             id="profile-pic-input"
                                             type="file" 
                                             accept="image/*" 
@@ -152,6 +159,7 @@ export default function ProfilePage() {
                                             style={{ display: 'none' }}
                                         />
                                     </div>
+                                    {uploadingPic && <span style={{ position: 'absolute', bottom: '-22px', left: 0, right: 0, textAlign: 'center', fontSize: '0.8rem', color: '#555' }}>Subiendo…</span>}
                                 </div>
                             </div>
                             <div className="profile-details">

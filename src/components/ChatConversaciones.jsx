@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { LanguageContext } from '../contexts/language.context';
+import defaultAvatar from "../assets/icons/default-avatar.svg";
 import "../indexChat.css";
 
 
@@ -66,7 +67,7 @@ export default function ChatConversaciones({ onSelectChat, currentUser }) {
                                 className="message-item"
                                 onClick={() => onSelectChat(chat)}
                             >
-                                <img src={receptor.foto_perfil ? `http://localhost:8000/storage/${receptor.foto_perfil}` : "/images/user.png"} alt="avatar" className="message-avatar" />
+                                <img src={receptor.foto_perfil ? `${API_URL}/storage/${receptor.foto_perfil}` : defaultAvatar} alt="avatar" className="message-avatar" />
                                 <div className="message-info">
                                     {/*<h4>{chat.usuarios[0]?.nickname}</h4>*/}
                                     <h4>{receptor?.nickname}</h4>
