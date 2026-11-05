@@ -9,12 +9,15 @@
     --bg-color-termConditions: #FFF;
     --bg-color-languageMenu: #FFF;
     --border-languageMenu: 1px solid black;
+    --color-divContainer: #222;
+    --color-link: #5877CC;
+    --color-link-hover: #203C8F;
 }
 
 .dark {
     --bg-color: #333333;
     --bg-color-divContainer: #2A2A2A;
-    --color-divContainer: #FFF; /*#7Ba6FF*/
+    --color-divContainer: #f1f1f1; /*#7Ba6FF*/
     --bg-color-HeaderLogged: #1E1E1E;
     --border-color-HeaderLogged: #333;
     --bg-color-termConditions: #87A6F5;
@@ -22,6 +25,8 @@
     --bg-color-languageMenu: #2A2A2A;
     --color-languageMenu: #FFF;
     --border-languageMenu: 1px solid white;
+    --color-link: #87A6F5;
+    --color-link-hover: #B4C7F7;
 }
 
 * {
@@ -38,7 +43,8 @@ body {
     padding: 0;
     display: flex;
     flex-direction: column;
-    font-family: 'Carlito';
+    font-family: 'Carlito', sans-serif;
+    font-size: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem);
     /*gap: 30px;*/
 }
 
@@ -55,11 +61,16 @@ body {
 .imputs {
     background-color: var(--bg-color-imputs);
     margin: 10px;
-    height: 2.5rem;
+    min-height: 2.75rem;
     width: 80%;
     padding: 5px;
     border: 1px solid #5877CC;
     border-radius: 3vh;
+}
+
+.imputs:focus {
+    outline: 2px solid #5877CC;
+    outline-offset: 2px;
 }
 
 .imputs:hover {
@@ -76,8 +87,14 @@ body {
 }*/
 
 a {
-    font-size: 0.75em;
-    color: var(--color-divContainer);
+    font-size: clamp(0.875rem, 0.8rem + 0.2vw, 1rem);
+    color: var(--color-link);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--color-link-hover);
+    text-decoration: underline;
 }
 
 .error {

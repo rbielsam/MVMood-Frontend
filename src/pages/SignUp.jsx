@@ -1,3 +1,4 @@
+import '../index.css';
 import Header from "../components/Header";
 import DivContainer from "../components/DivContainer";
 import LeftSection from "../components/LeftSection";
