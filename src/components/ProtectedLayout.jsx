@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import HeaderLogged from './HeaderLogged';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
@@ -7,6 +7,8 @@ import '../indexLogged.css';
 
 export default function ProtectedLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { pathname } = useLocation();
+    const isChat = pathname === '/chat';
 
     // Cerrar con Esc
     useEffect(() => {
@@ -28,9 +30,9 @@ export default function ProtectedLayout() {
         <>
             <HeaderLogged onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
             {sidebarOpen && <div className="sidebar-backdrop" onClick={closeSidebar} aria-hidden="true" />}
-            <div className="container">
+            <div className={`container${isChat ? ' container--chat' : ''}`}>
                 <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-                <div className="main">
+                <div className={`main${isChat ? ' main--chat' : ''}`}>
                     <Outlet />
                 </div>
             </div>

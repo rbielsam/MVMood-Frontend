@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { LanguageContext } from '../contexts/language.context';
 import defaultAvatar from "../assets/icons/default-avatar.svg";
 import "../indexChat.css";
 
 
-export default function ChatConversaciones({ onSelectChat, currentUser }) {
+export default function ChatConversaciones({ onSelectChat, currentUser, refreshKey = 0, onChatsLoaded }) {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
-    //const language = lang.content.ConversacionesChat;
-    const language = lang.errorChat;
+    const { lang } = useContext(LanguageContext);
+    const language = lang.ConversacionesChat;
+    const errorLanguage = lang.errorChat;
 
     const [chats, setChats] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -25,27 +25,28 @@ export default function ChatConversaciones({ onSelectChat, currentUser }) {
                     }
                 });
                 const data = await res.json();
-                //console.log("Respuesta Back: ", data);
-                if (!Array.isArray(data)) {
-                    console.error(`${language.errorConversacionesChat} ${data}`);
+
+                if (!res.ok || !Array.isArray(data)) {
+                    console.error(`${errorLanguage.errorConversacionesChat} ${data.message ?? res.status}`);
                     setChats([]);
+                    onChatsLoaded?.([]);
                     return;
                 }
 
                 setChats(data);
-                //console.log("Chats recibidos: ", chats);
-
+                onChatsLoaded?.(data);
             } catch (err) {
-                console.error(`${language.errorServerConnectionChat} ${err}`);
+                console.error(`${errorLanguage.errorServerConnectionChat} ${err}`);
             } finally {
                 setCargando(false);
             }
         };
+
         fetchChats();
-    }, []);
+    }, [refreshKey, onChatsLoaded, API_URL, errorLanguage.errorConversacionesChat, errorLanguage.errorServerConnectionChat]);
 
     return (
-        
+
         <div className="messages-main">
 
             <h2>{language.conversations}</h2>
@@ -56,21 +57,25 @@ export default function ChatConversaciones({ onSelectChat, currentUser }) {
             ) : (
                 <div className="messages-list">
                     {chats.map((chat) => {
-                        const receptor = chat.usuarios?.find(u => u.id !== currentUser.id);
+                        const receptor = chat.usuarios?.find(u => u.id !== currentUser?.id);
                         if (!receptor) return null;
-                        //console.log("Receptor: ", receptor);
+
+                        const foto = receptor.foto_perfil
+                            ? (receptor.foto_perfil.startsWith('http')
+                                ? receptor.foto_perfil
+                                : `${API_URL}/storage/${receptor.foto_perfil}`)
+                            : defaultAvatar;
 
                         return (
-                    
+
                             <div
                                 key={chat.id}
                                 className="message-item"
                                 onClick={() => onSelectChat(chat)}
                             >
-                                <img src={receptor.foto_perfil ? `${API_URL}/storage/${receptor.foto_perfil}` : defaultAvatar} alt="avatar" className="message-avatar" />
+                                <img src={foto} alt="avatar" className="message-avatar" />
                                 <div className="message-info">
-                                    {/*<h4>{chat.usuarios[0]?.nickname}</h4>*/}
-                                    <h4>{receptor?.nickname}</h4>
+                                    <h4>{receptor.nickname}</h4>
                                     <p className="preview">{chat.ultimo_mensaje?.contenido || `${language.no_messages_yet}`}</p>
                                 </div>
                             </div>

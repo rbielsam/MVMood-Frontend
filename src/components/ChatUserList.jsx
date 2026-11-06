@@ -2,65 +2,61 @@ import { useEffect, useState, useContext } from "react";
 import { LanguageContext } from "../contexts/language.context";
 
 
-export default function ChatUserList ({ currentUser, onSelectUser }) {
+export default function ChatUserList ({ onSelectUser }) {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
-    //const language = lang.content.ChatUserList;
-    const language = lang.errorChat;
-    
+    const { lang } = useContext(LanguageContext);
+    const language = lang.ChatUserList;
+    const errorLanguage = lang.errorChat;
+
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        getUserList();
-    }, []);
+        const getUserList = async () => {
+            try {
 
-    const getUserList = async () => {    
-        try {
+                const response  = await fetch(`${API_URL}/api/users`, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                        "Accept": "application/json"
+                    }
+                });
 
-            const response  = await fetch(`${API_URL}/api/users`, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                    "Accept": "application/json"
+                const data = await response.json();
+
+                if (!response.ok || !Array.isArray(data)) {
+                    console.error(`${errorLanguage.errorReceivedListUsers} ${data.message ?? response.status}`);
+                    setUsers([]);
+                    return;
                 }
-            });
 
-            const data = await response.json();
-            //console.log(data);
+                setUsers(data);
 
-            setUsers(data);
-
-            if (!response.ok) {
-                const errorResponse = data.message;
-                console.error(`${language.errorReceivedListUsers} ${errorResponse}`);
-                throw new Error(`${language.errorReceivedListUsers} ${errorResponse}`);
-
-                //setError("Error al recibir la lista de usuarios: ", errorResponse);
+            } catch (err) {
+                console.error(`${errorLanguage.errorServerConnectionChat} ${err.message}`);
+                setUsers([]);
             }
-        
+        }
 
-        } catch (err) {
-            console.error(`${language.errorServerConnectionChat} ${err.message}`);
-        }  
-    }
+        getUserList();
+    }, [API_URL, errorLanguage.errorReceivedListUsers, errorLanguage.errorServerConnectionChat]);
 
     const listUsers = () => {
         return users.map(user => (
-            <li key={user.id} className="user-item" onClick={() => {/*console.log("Usuario del chat seleccionado: ", user);*/ onSelectUser(user)}}>
-                {/*<img serc="" className="user-foto_perfil" />*/}
+            <li key={user.id} className="user-item" onClick={() => onSelectUser(user)}>
                 <p>{user.nickname}</p>
             </li>
         ))
     }
 
     return (
-        <>
-            <div className="users-list">
-                <h3>{language.users}</h3>
+        <div className="users-list">
+            <h3>{language.users}</h3>
+            <ul className="users-list-items">
                 {listUsers()}
-            </div>
-        </>
+            </ul>
+        </div>
     );
 
 }

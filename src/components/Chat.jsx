@@ -1,110 +1,87 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import echo from '../lib/echo'; // Tu instancia de Laravel Echo
+import { useState, useEffect, useRef, useContext } from 'react';
+import echo from '../lib/echo';
 import { LanguageContext } from '../contexts/language.context';
 import "../indexChat.css";
 
 
-export default function Chat({ selectedChat, onBack, currentUser }) {
+export default function Chat({ selectedChat, onBack, currentUser, onChatCreated }) {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
-    //const language = lang.content.Chat;
-    const language = lang.errorChat;
-
-    const receptor = selectedChat.usuarios?.find(u => u.id !== currentUser.id);
-    if (!selectedChat) return null;
+    const { lang } = useContext(LanguageContext);
+    const language = lang.Chat;
+    const errorLanguage = lang.errorChat;
 
     const [mensajes, setMensajes] = useState([]);
     const [nuevoMensaje, setNuevoMensaje] = useState("");
+    const [cargando, setCargando] = useState(Boolean(selectedChat?.id));
     const scrollRef = useRef(null);
-    const [cargando, setCargando] = useState(false);
 
+    const receptor = selectedChat?.usuarios?.find(
+        (usuario) => usuario.id !== currentUser?.id
+    );
 
     useEffect(() => {
-        
-        if (!selectedChat?.id) return;
+        const chatId = selectedChat?.id;
+        if (!chatId) return;
 
-        const chatId = selectedChat.id;
-        // Cargar mensajes previos desde la API
+        let cancelado = false;
+
         const cargarHistorial = async () => {
             try {
-                const response = await fetch(`${API_URL}/api/chats/${selectedChat.id}/mensajes`, {
+                const response = await fetch(`${API_URL}/api/chats/${chatId}/mensajes`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Accept': 'application/json'
                     }
                 });
                 const data = await response.json();
-                // Devuelve los datos en .data.data
-                // Los invertimos para que el más reciente esté abajo
-                //setMensajes(data.data.reverse());
-
-                //console.log("Historial recibido: ", data);
 
                 if (!response.ok) {
-                    console.error("Error HTTP: ", response.status, data);
+                    console.error(`${errorLanguage.errorServerConnectionChat} ${data.message ?? response.status}`);
                     return;
                 }
 
                 if (Array.isArray(data.data)) {
-                    setMensajes(data.data.reverse());
+                    setMensajes([...data.data].reverse());
+                } else {
+                    console.error(`${errorLanguage.errorFormatoInesperado} ${data}`);
                 }
-                else {
-                    console.error(`${language.errorFormatoInesperado} ${data}`);
-                }
-
             } catch (err) {
-                console.error(`${language.errorServerConnectionChat} ${err}`);
-
+                console.error(`${errorLanguage.errorServerConnectionChat} ${err}`);
             } finally {
-                setCargando(false);
+                if (!cancelado) setCargando(false);
             }
         };
 
         cargarHistorial();
 
-        // Suscripción a Pusher (Canal Privado)
         echo.private(`chat.${chatId}`)
             .listen('.nuevo-mensaje', (e) => {
-            console.log(`${language.okLiveMessageReceived} ${e.mensaje.uuid}`);
+                if (e.mensaje.emisor_id === currentUser?.id) return;
 
-            setMensajes((prev) => {
-                // Verificamos si el mensaje ya está en la lista (por su UUID)
-                const yaExiste = prev.some(m => m.uuid === e.mensaje.uuid);
-
-                if (yaExiste) {
-                    console.log(`${language.ignoredMessage}`);
-                    return prev; // No hacemos nada, devolvemos la lista como estaba
-                }
-
-                // Si no existe, aplicamos la lógica del emisor
-                if (e.mensaje.emisor_id !== currentUser.id) {
-                    return [...prev, e.mensaje];
-                }
-
-                return prev;
+                setMensajes((prev) => {
+                    const yaExiste = prev.some(m => m.uuid === e.mensaje.uuid);
+                    return yaExiste ? prev : [...prev, e.mensaje];
+                });
             });
-        });
 
         return () => {
+            cancelado = true;
             echo.leave(`chat.${chatId}`);
         };
-    }, [selectedChat.id]);
+    }, [selectedChat?.id, currentUser?.id, API_URL, errorLanguage]);
 
-    // Scroll automático al final
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [mensajes]);
 
-    // Enviar mensaje a la API
     const handleSend = async (e) => {
         e.preventDefault();
-        if (!nuevoMensaje.trim()) return;
+        if (!nuevoMensaje.trim() || !receptor?.id || cargando) return;
 
-        const receptor = selectedChat.usuarios?.find(u => u.id !== currentUser.id);
-        const textoParaEnviar = nuevoMensaje;
-        setNuevoMensaje(""); // Limpiamos el input
+        const texto = nuevoMensaje;
+        setNuevoMensaje("");
 
         try {
             const response = await fetch(`${API_URL}/api/chats/enviar`, {
@@ -116,43 +93,72 @@ export default function Chat({ selectedChat, onBack, currentUser }) {
                 },
                 body: JSON.stringify({
                     receptor_id: receptor.id,
-                    contenido: textoParaEnviar
+                    contenido: texto
                 })
             });
+            const data = await response.json();
 
-            if (response.ok) {
-                const data = await response.json();
-                // Añadimos nuestro propio mensaje a la lista local
-                setMensajes(prev => [...prev, data.mensaje]);
+            if (!response.ok) {
+                setNuevoMensaje(texto);
+                console.error(`${errorLanguage.errorReturnChat} ${data.message ?? response.status}`);
+                return;
             }
+
+            if (!selectedChat.id) {
+                if (data.chat && onChatCreated) {
+                    onChatCreated(data.chat);
+                } else {
+                    setNuevoMensaje(texto);
+                }
+                return;
+            }
+
+            if (!data.mensaje) {
+                setNuevoMensaje(texto);
+                return;
+            }
+
+            setMensajes((prev) => {
+                const yaExiste = prev.some(m => m.uuid === data.mensaje.uuid);
+                return yaExiste ? prev : [...prev, data.mensaje];
+            });
         } catch (error) {
-            console.error(`${language.errorServerConnectionChat} ${error}`);
+            setNuevoMensaje(texto);
+            console.error(`${errorLanguage.errorServerConnectionChat} ${error}`);
         }
     };
 
-    console.log(`${language.renderedChat}`);
+    if (!selectedChat) return null;
 
-    return ( 
+    return (
         <div className="chatbox-container">
 
-            <div className="chatbox-header"> 
-                <button onClick={onBack}>← {language.back}</button> 
-                {/*<h3>{selectedChat.usuarios[0]?.nickname}</h3> */}
+            <div className="chatbox-header">
+                <button type="button" className="chatbox-back" onClick={onBack}>
+                    ← {language.back}
+                </button>
                 <h3>{receptor?.nickname}</h3>
-            </div> 
-            <div className="chatbox-messages"> 
-                {mensajes.map(msg => ( 
-                    <div key={msg.uuid} className={`chatbox-msg ${msg.emisor_id === currentUser.id ? 'sent' : 'received'}`}> 
-                        {msg.contenido} 
-                    </div> 
-                    ))} 
-                <div ref={scrollRef} /> 
-            </div> 
-            <form onSubmit={handleSend} className="chatbox-input"> 
-                <input value={nuevoMensaje} onChange={(e) => setNuevoMensaje(e.target.value)} /> 
-                <button type="submit">{language.send}</button> 
-            </form> 
+            </div>
 
-        </div> 
-    );  
+            <div className="chatbox-messages">
+                {mensajes.map(msg => (
+                    <div key={msg.uuid} className={`chatbox-msg ${msg.emisor_id === currentUser?.id ? 'sent' : 'received'}`}>
+                        {msg.contenido}
+                    </div>
+                ))}
+                <div ref={scrollRef} />
+            </div>
+
+            <form onSubmit={handleSend} className="chatbox-input">
+                <input
+                    value={nuevoMensaje}
+                    onChange={(e) => setNuevoMensaje(e.target.value)}
+                    disabled={cargando}
+                    aria-label={language.send}
+                />
+                <button type="submit" disabled={cargando}>{language.send}</button>
+            </form>
+
+        </div>
+    );
 }

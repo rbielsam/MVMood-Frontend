@@ -1,101 +1,80 @@
-import { useState, useContext, useEffect } from 'react';
-import { UserContext } from "../contexts/user.context.jsx";
-import "../indexChat.css";
-import "../indexLogged.css";
+import { useState, useContext } from 'react';
+import { UserContext } from '../contexts/user.context.jsx';
+import { LanguageContext } from '../contexts/language.context.jsx';
+import '../indexChat.css';
 import ChatConversaciones from '../components/ChatConversaciones.jsx';
 import Chat from '../components/Chat.jsx';
-import Footer from '../components/Footer.jsx';
-import HeaderLogged from "../components/HeaderLogged.jsx";
-import Sidebar from '../components/Sidebar.jsx';
-import ChatUserList from "../components/ChatUserList";
-import { LanguageContext } from "../contexts/language.context.jsx";
+import ChatUserList from '../components/ChatUserList';
 
 
 export default function ChatPage() {
 
-    const API_URL = import.meta.env.VITE_API_URL;
+    const { lang } = useContext(LanguageContext);
+    const language = lang.ChatPage;
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
-    //const language = lang.content.ChatPage;
-    const language = lang.errorChat;
-    
-    const { user, error, setError } = useContext(UserContext);
+    const { user: currentUser, error } = useContext(UserContext);
     const [chatSeleccionado, setChatSeleccionado] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [conversaciones, setConversaciones] = useState([]);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    useEffect(() => {
-        const onKey = (e) => { if (e.key === 'Escape') setSidebarOpen(false); };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, []);
+    const startChatWithUser = (selectedUser) => {
+        if (!currentUser?.id) return;
 
-    useEffect(() => {
-        document.body.style.overflow = sidebarOpen ? 'hidden' : '';
-        return () => { document.body.style.overflow = ''; };
-    }, [sidebarOpen]);
+        const existente = conversaciones.find((chat) =>
+            chat.usuarios?.some((usuario) => usuario.id === selectedUser.id)
+        );
 
+        setChatSeleccionado(existente ?? {
+            id: null,
+            usuarios: [currentUser, selectedUser],
+            ultimo_mensaje: null,
+        });
+    };
 
-    const startChatWithUser = async (user) => {
-        try {
-            //console.log("receptor_id que se envía: ", user.id);
-            const response = await fetch(`${API_URL}/api/chats/enviar`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify({
-                    receptor_id: user.id,
-                    contenido: ""
-                })
-            });
+    const handleChatCreated = (chat) => {
+        setChatSeleccionado(chat);
+        setRefreshKey((key) => key + 1);
+    };
 
-            const data = await response.json();
-            //console.log("Chat creado o existente: ", data);
+    const handleBack = () => {
+        setChatSeleccionado(null);
+        setRefreshKey((key) => key + 1);
+    };
 
-            if (data.chat) {
-                setChatSeleccionado(data.chat);
-            }
-            else {
-                console.error(`${language.errorReturnChat} ${data}`);
-            }
-        
-
-        } catch (err) {
-            console.error(`${language.errorServerConnectionChat} ${err.message}`);
-            throw new Error (`${language.errorServerConnectionChat} ${err.message}`);
-        }
-    }
+    const receptorBorrador = chatSeleccionado?.usuarios?.find(
+        (usuario) => usuario.id !== currentUser?.id
+    );
 
     return (
         <>
-            <HeaderLogged onToggleSidebar={() => setSidebarOpen((v) => !v)} sidebarOpen={sidebarOpen} />
-            {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} aria-hidden="true" />}
+            {error && <p className="error">{error}</p>}
 
-            <div className="chat-layout">
-                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-                {error && (<p className="error">{error}</p>)}
-
+            <div className={`chat-page${chatSeleccionado ? ' chat-page--open' : ''}`}>
                 <div className="chat-left-column">
                     <div className="chat-left-users">
-                        <ChatUserList 
-                                currentUser={user}
-                                onSelectUser={startChatWithUser}
+                        <ChatUserList
+                            onSelectUser={startChatWithUser}
                         />
                     </div>
 
                     <div className="chat-left-chats">
-                        <ChatConversaciones onSelectChat={(chat) => setChatSeleccionado(chat)} currentUser={user} />
+                        <ChatConversaciones
+                            currentUser={currentUser}
+                            refreshKey={refreshKey}
+                            onChatsLoaded={setConversaciones}
+                            onSelectChat={setChatSeleccionado}
+                        />
                     </div>
                 </div>
 
                 <div className="chat-right-column">
                     {chatSeleccionado ? (
                         <Chat
+                            key={chatSeleccionado.id ?? `nuevo-${receptorBorrador?.id}`}
                             selectedChat={chatSeleccionado}
-                            currentUser={user}
-                            onBack={() => setChatSeleccionado(null)}
+                            currentUser={currentUser}
+                            onBack={handleBack}
+                            onChatCreated={handleChatCreated}
                         />
                     ) : (
                         <div className="chat-placeholder">
@@ -103,10 +82,7 @@ export default function ChatPage() {
                         </div>
                     )}
                 </div>
-
             </div>
-
-            <Footer />
         </>
     );
 }
