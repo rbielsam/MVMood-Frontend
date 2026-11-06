@@ -183,54 +183,83 @@ function UserProviderWrapper(props) {
 
     }
 
-    // Función asíncrona para restablecer la constraseña
-    const resetPassword = async (user) => {
+    // Función asíncrona para solicitar el enlace de restablecimiento
+    const requestPasswordReset = async (email) => {
 
         const lang = getSavedLang();
         const language = lang.UserFunctions;
 
-        // Llamada al Backend
+        setError("");
+        setErrorBackend("");
+        setMessage("");
+
         try {
-            const response = await fetch(`${API_URL}/api/resetpassword`, {
+            const response = await fetch(`${API_URL}/api/forgot-password`, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(user)
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ email })
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                const errorResponse = data.message;
-                console.error(`${language.errorServerResetPassword} ${errorResponse}`);
-                setError("errorServerResetPassword");
-                setErrorBackend(`${errorResponse}`);
-                //throw new Error("Error al actualizar la contraseña: ", errorResponse.message);
-
-                setUser({
-                    id:"",
-                    nickname: "",
-                    email: "",
-                    password: "",
-                    repeatPassword: ""
-                });
-                return;
+                console.error(`${language.errorForgotPassword} ${data.message}`);
+                setError("errorForgotPassword");
+                setErrorBackend(`${data.message}`);
+                return false;
             }
 
-            console.log(`${language.okResetPassword}`);
-            setMessage(`${language.okResetPassword}`);
+            setMessage(`${language.okForgotPassword}`);
+            return true;
 
         } catch (err) {
             console.error(`${language.errorServerConnection} ${err.message}`);
             setError("errorServerConnection");
             setErrorBackend(`${err.message}`);
+            return false;
+        }
+    }
 
-            setUser({
-                id: "",
-                nickname: "",
-                email: "",
-                password: "",
-                repeatPassword: ""
+    // Función asíncrona para confirmar el restablecimiento de la contraseña
+    const confirmPasswordReset = async ({ email, token, password, password_confirmation }) => {
+
+        const lang = getSavedLang();
+        const language = lang.UserFunctions;
+
+        setError("");
+        setErrorBackend("");
+        setMessage("");
+
+        try {
+            const response = await fetch(`${API_URL}/api/reset-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ email, token, password, password_confirmation })
             });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error(`${language.errorConfirmResetPassword} ${data.message}`);
+                setError("errorConfirmResetPassword");
+                setErrorBackend(`${data.message}`);
+                return false;
+            }
+
+            setMessage(`${language.okConfirmResetPassword}`);
+            return true;
+
+        } catch (err) {
+            console.error(`${language.errorServerConnection} ${err.message}`);
+            setError("errorServerConnection");
+            setErrorBackend(`${err.message}`);
+            return false;
         }
     }
 
@@ -371,7 +400,7 @@ function UserProviderWrapper(props) {
     }, [token]);
     
     return (
-        <UserContext.Provider value={{ user, setUser, login, error, setError, errorBackend, signUp, resetPassword, message, token, getDataLoggedUser, updateNickname, updatePassword }}>
+        <UserContext.Provider value={{ user, setUser, login, error, setError, errorBackend, signUp, requestPasswordReset, confirmPasswordReset, message, token, getDataLoggedUser, updateNickname, updatePassword }}>
             {props.children}
         </UserContext.Provider>
     );

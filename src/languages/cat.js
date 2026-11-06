@@ -5,7 +5,7 @@ const cat = {
         password: "contrasenya",
         logIn: "Iniciar sessió",
         signUp: "Registra't",
-        forgotPassword: "Has oblidat la constrasenya?"
+        forgotPassword: "Has oblidat la contrasenya?"
     },
 
     signUp: {
@@ -22,7 +22,21 @@ const cat = {
     forgotPassword: {
         writeEmail: "Escriu el teu email",
         email: "email",
-        resetPassword: "Restableix la contrasenya"
+        resetPassword: "Restableix la contrasenya",
+        sending: "Enviant..."
+    },
+
+    resetPassword: {
+        writeNewPassword: "Escriu la teva nova contrasenya",
+        newPassword: "Nova contrasenya",
+        repeatPassword: "Repeteix la contrasenya",
+        submit: "Restableix la contrasenya",
+        sending: "Guardant...",
+        passwordMismatch: "Les contrasenyes no coincideixen",
+        passwordTooShort: "La contrasenya ha de tenir almenys 8 caràcters",
+        invalidLink: "L'enllaç no és vàlid o ha caducat",
+        requestNewLink: "Sol·licitar un enllaç nou",
+        backToLogin: "Tornar a l'inici de sessió"
     },
 
     errorPage: {
@@ -130,8 +144,12 @@ const cat = {
         okGetDataUserLogged: "Dades d'usuario rebuts correctament",
         errorServerUpdateNickname: "Error al rebre el Nickname actualitzat: ",
         okUpdateNickname: "Nickname actualitzat correctament",
-        errorServerUpdatePassword: "Error al actualitzar la constrasenya: ",
-        okUpdatePassword: "Contrasenya actualitzada correctament"
+        errorServerUpdatePassword: "Error al actualitzar la contrasenya: ",
+        okUpdatePassword: "Contrasenya actualitzada correctament",
+        errorForgotPassword: "No s'ha pogut enviar l'enllaç: ",
+        okForgotPassword: "Si el correu està registrat, rebràs un enllaç per restablir la contrasenya.",
+        errorConfirmResetPassword: "No s'ha pogut restablir la contrasenya: ",
+        okConfirmResetPassword: "Contrasenya restablerta correctament. Torna a iniciar sessió."
     },
 
     errorPosts: {

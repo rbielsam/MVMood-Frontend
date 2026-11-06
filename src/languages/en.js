@@ -22,7 +22,21 @@ const en = {
     forgotPassword: {
         writeEmail: "Write your email",
         email: "email",
-        resetPassword: "Reset password"
+        resetPassword: "Reset password",
+        sending: "Sending..."
+    },
+
+    resetPassword: {
+        writeNewPassword: "Write your new password",
+        newPassword: "New password",
+        repeatPassword: "Repeat password",
+        submit: "Reset password",
+        sending: "Saving...",
+        passwordMismatch: "Passwords do not match",
+        passwordTooShort: "Password must be at least 8 characters",
+        invalidLink: "The link is invalid or has expired",
+        requestNewLink: "Request a new link",
+        backToLogin: "Back to login"
     },
 
     errorPage: {
@@ -132,7 +146,11 @@ const en = {
         errorServerUpdateNickname: "Error receiving updated nickname: ",
         okUpdateNickname: "Nickname updated correctly",
         errorServerUpdatePassword: "Error updating password: ",
-        okUpdatePassword: "Contraseña actualizada correctamente"
+        okUpdatePassword: "Contraseña actualizada correctamente",
+        errorForgotPassword: "Could not send the link: ",
+        okForgotPassword: "If the email is registered, you will receive a link to reset your password.",
+        errorConfirmResetPassword: "Could not reset the password: ",
+        okConfirmResetPassword: "Password reset successfully. Please log in again."
     },
 
     errorPosts: {

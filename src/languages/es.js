@@ -5,7 +5,7 @@ const es = {
         password: "contraseña",
         logIn: "Iniciar sesión",
         signUp: "Registrate",
-        forgotPassword: "¿Olvidaste la constraseña?"
+        forgotPassword: "¿Olvidaste la contraseña?"
     },
 
     signUp: {
@@ -22,7 +22,21 @@ const es = {
     forgotPassword: {
         writeEmail: "Escribe tu email",
         email: "email",
-        resetPassword: "Restablecer contraseña"
+        resetPassword: "Restablecer contraseña",
+        sending: "Enviando..."
+    },
+
+    resetPassword: {
+        writeNewPassword: "Escribe tu nueva contraseña",
+        newPassword: "Nueva contraseña",
+        repeatPassword: "Repite la contraseña",
+        submit: "Restablecer contraseña",
+        sending: "Guardando...",
+        passwordMismatch: "Las contraseñas no coinciden",
+        passwordTooShort: "La contraseña debe tener al menos 8 caracteres",
+        invalidLink: "El enlace no es válido o ha caducado",
+        requestNewLink: "Solicitar un enlace nuevo",
+        backToLogin: "Volver al inicio de sesión"
     },
 
     errorPage: {
@@ -130,8 +144,12 @@ const es = {
         okGetDataUserLogged: "Datos de usuario recibidos correctamente",
         errorServerUpdateNickname: "Error al recibir el Nickname actualizado: ",
         okUpdateNickname: "Nickname actualizado correctamente",
-        errorServerUpdatePassword: "Error al actualizar la constraseña: ",
-        okUpdatePassword: "Contraseña actualizada correctamente"
+        errorServerUpdatePassword: "Error al actualizar la contraseña: ",
+        okUpdatePassword: "Contraseña actualizada correctamente",
+        errorForgotPassword: "No se pudo enviar el enlace: ",
+        okForgotPassword: "Si el correo está registrado, recibirás un enlace para restablecer la contraseña.",
+        errorConfirmResetPassword: "No se pudo restablecer la contraseña: ",
+        okConfirmResetPassword: "Contraseña restablecida correctamente. Vuelve a iniciar sesión."
     },
 
     errorPosts: {
