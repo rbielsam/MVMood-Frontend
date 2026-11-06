@@ -10,10 +10,11 @@ import styleLanguageIcon from "../styles/LanguageIcon.module.css";
 import ImgLogo from "./ImgLogo";
 import { UserContext } from "../contexts/user.context";
 import defaultAvatar from "../assets/icons/default-avatar.svg";
+import hamburgerIcon from "../assets/icons/hamburger.svg";
 import { Link } from "react-router-dom";
 
 
-export default function Header ({ children }) {
+export default function Header ({ onToggleSidebar, sidebarOpen }) {
 
     const API_URL = import.meta.env.VITE_API_URL;
     const [showLanguageMenu, setShowLanguageMenu] = useState(false);
@@ -40,6 +41,17 @@ export default function Header ({ children }) {
     return (
         <>
             <header className={styles.topbar}>
+                <button
+                    type="button"
+                    className="hamburger-btn"
+                    onClick={onToggleSidebar}
+                    aria-expanded={sidebarOpen}
+                    aria-controls="main-sidebar"
+                    aria-label="Abrir menú"
+                >
+                    <img src={hamburgerIcon} alt="" />
+                </button>
+
                 <div className="brand">
                     {/*<img src={imgLogo} alt="MVM Mood Logo" width="32" height="32" />
                     {children}*/}

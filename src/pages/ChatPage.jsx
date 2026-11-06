@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { UserContext } from "../contexts/user.context.jsx";
 import "../indexChat.css";
 import "../indexLogged.css";
@@ -21,6 +21,18 @@ export default function ChatPage() {
     
     const { user, error, setError } = useContext(UserContext);
     const [chatSeleccionado, setChatSeleccionado] = useState(null);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    useEffect(() => {
+        const onKey = (e) => { if (e.key === 'Escape') setSidebarOpen(false); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
+    useEffect(() => {
+        document.body.style.overflow = sidebarOpen ? 'hidden' : '';
+        return () => { document.body.style.overflow = ''; };
+    }, [sidebarOpen]);
 
 
     const startChatWithUser = async (user) => {
@@ -58,44 +70,43 @@ export default function ChatPage() {
 
     return (
         <>
-            <div className="app-layout">
-                <HeaderLogged />
+            <HeaderLogged onToggleSidebar={() => setSidebarOpen((v) => !v)} sidebarOpen={sidebarOpen} />
+            {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} aria-hidden="true" />}
 
-                <div className="chat-layout">
-                    <Sidebar />
-                    {error && (<p className="error">{error}</p>)}
+            <div className="chat-layout">
+                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                {error && (<p className="error">{error}</p>)}
 
-                    <div className="chat-left-column">
-                        <div className="chat-left-users">
-                            <ChatUserList 
-                                    currentUser={user}
-                                    onSelectUser={startChatWithUser}
-                            />
-                        </div>
-
-                        <div className="chat-left-chats">
-                            <ChatConversaciones onSelectChat={(chat) => setChatSeleccionado(chat)} currentUser={user} />
-                        </div>
-                    </div>
-
-                    <div className="chat-right-column">
-                        {chatSeleccionado ? (
-                            <Chat
-                                selectedChat={chatSeleccionado}
+                <div className="chat-left-column">
+                    <div className="chat-left-users">
+                        <ChatUserList 
                                 currentUser={user}
-                                onBack={() => setChatSeleccionado(null)}
-                            />
-                        ) : (
-                            <div className="chat-placeholder">
-                                <p>{language.chats}</p>
-                            </div>
-                        )}
+                                onSelectUser={startChatWithUser}
+                        />
                     </div>
 
+                    <div className="chat-left-chats">
+                        <ChatConversaciones onSelectChat={(chat) => setChatSeleccionado(chat)} currentUser={user} />
+                    </div>
                 </div>
 
-                <Footer />
+                <div className="chat-right-column">
+                    {chatSeleccionado ? (
+                        <Chat
+                            selectedChat={chatSeleccionado}
+                            currentUser={user}
+                            onBack={() => setChatSeleccionado(null)}
+                        />
+                    ) : (
+                        <div className="chat-placeholder">
+                            <p>{language.chats}</p>
+                        </div>
+                    )}
+                </div>
+
             </div>
+
+            <Footer />
         </>
     );
 }

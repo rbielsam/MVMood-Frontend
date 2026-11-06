@@ -134,12 +134,8 @@ export default function ProfilePage() {
 
     return (
         <>
-            <HeaderLogged />
-            <div className="container">
-                <Sidebar />
-                <div className="main">
-                    {error && (<p className="error">{error}</p>)}
-                    <h2>{language.settings}</h2>
+            {error && (<p className="error">{error}</p>)}
+            <h2>{language.settings}</h2>
 
                     <div className="settings-section profile-section">
                         <h3>{language.profile_edit}</h3>
@@ -311,9 +307,6 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     )}
-                </div>
-            </div>
-            <Footer />
         </>
     );
 }

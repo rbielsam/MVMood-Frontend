@@ -1411,28 +1411,93 @@ h2 { color: #333; margin-top: 20px; margin-bottom: 30px; padding-left: 15px; fon
     cursor: pointer;
 }*/
 
+
+/* Botón hamburguesa (solo móvil) */
+.hamburger-btn {
+    display: none;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    color: #5877CC;
+    z-index: 1001;
+}
+
+.hamburger-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Backdrop del drawer */
+.sidebar-backdrop {
+    display: none;
+}
+
 /* Responsive estructural */
 @media (max-width: 768px) {
-    .sidebar {
-        position: static;
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid #ccc;
+    .hamburger-btn {
+        display: flex;
     }
+
+    .brand {
+        padding-left: 40px;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 260px;
+        height: calc(100vh - 70px);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 999;
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+        border-right: 1px solid #ccc;
+        border-bottom: none;
+        overflow-y: auto;
+    }
+
+    .sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        top: 70px;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 998;
+    }
+
     .main, .chat-layout {
         margin-left: 0;
         margin-top: 70px;
     }
+
     .users-list {
         width: 100%;
     }
+
     .chat-left-column {
         width: 100%;
         max-height: 35vh;
     }
+
     .topbar {
         padding: 0 12px;
+    }
+
+    .dark .sidebar {
+        background-color: #1e1e1e;
+        border-color: #333;
     }
 }
 
@@ -1442,5 +1507,9 @@ h2 { color: #333; margin-top: 20px; margin-bottom: 30px; padding-left: 15px; fon
     }
     .imputs {
         width: 95%;
+    }
+    .sidebar {
+        width: 85vw;
+        max-width: 300px;
     }
 }

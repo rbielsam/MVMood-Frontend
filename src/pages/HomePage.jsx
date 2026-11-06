@@ -43,37 +43,27 @@ export default function HomePage() {
 
     return (
         <>
-            <HeaderLogged />
+            {publicaciones?.mensaje && <p className="ok">{publicaciones.mensaje}</p>}
+            {publicaciones?.error && <p className="error">{publicaciones.error}</p>} 
+            {error && (<p className="error">{error}</p>)}
 
-            <div className="container">
-                <Sidebar />
+            <Button className={showCreatePost ? "buttonCancel" : ""} onClick={() => setShowCreatePost(!showCreatePost)}>
+                {showCreatePost ? `${language.cancel}` : `${language.create_post}`}
+            </Button>
 
-                <div className="main">
-                    {publicaciones?.mensaje && <p className="ok">{publicaciones.mensaje}</p>}
-                    {publicaciones?.error && <p className="error">{publicaciones.error}</p>} 
-                    {error && (<p className="error">{error}</p>)}
+            {showCreatePost && (<CreatePostForm onCreated={onCreated} />)}
 
-                    <Button className={showCreatePost ? "buttonCancel" : ""} onClick={() => setShowCreatePost(!showCreatePost)}>
-                        {showCreatePost ? `${language.cancel}` : `${language.create_post}`}
-                    </Button>
-
-                    {showCreatePost && (<CreatePostForm onCreated={onCreated} />)}
-
-                    {!publicaciones?.data || publicaciones.data.length === 0 ? (
-                        <div className="post">
-                            <p>{language.no_posts}</p>
-                        </div>
-                    ) : (
-                        publicaciones.data.map((p) => (
-                            <div className="post" key={p.id}>
-                                <Post post={p} update={update} del={del} updated={getPosts} deleted={getPosts} like={like} getComments={getComments} createComment={createComment} />
-                            </div>
-                        ))
-                    )}
+            {!publicaciones?.data || publicaciones.data.length === 0 ? (
+                <div className="post">
+                    <p>{language.no_posts}</p>
                 </div>
-            </div>
-            
-            <Footer />
+            ) : (
+                publicaciones.data.map((p) => (
+                    <div className="post" key={p.id}>
+                        <Post post={p} update={update} del={del} updated={getPosts} deleted={getPosts} like={like} getComments={getComments} createComment={createComment} />
+                    </div>
+                ))
+            )}
         </>
     );
 }

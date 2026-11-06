@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/utils/ProtectedRoute';
 import PublicRoute from './components/utils/PublicRoute';
+import ProtectedLayout from './components/ProtectedLayout';
 import './index.css';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -24,10 +25,12 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/chat" element={<ChatPage />} />
+          <Route element={<ProtectedLayout />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+          </Route>
         </Route>
       
         <Route path="*" element={<ErrorPage />} /> // Cualquier ruta que no esté registrada en las Route llevará a la página de error
