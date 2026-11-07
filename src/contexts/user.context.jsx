@@ -25,13 +25,22 @@ function UserProviderWrapper(props) {
         email: "",
         password: "",
         repeatPassword: "",
-        nickname: ""
+        nickname: "",
+        rol: ""
     });
     
     const [error, setError] = useState("");
     const [errorBackend, setErrorBackend] = useState("");
     const [message, setMessage] = useState("");
     const [token, setToken] = useState(localStorage.getItem("token") || "");
+
+
+    // Limpia los mensajes de la acción anterior
+    const limpiarFeedback = () => {
+        setError("");
+        setErrorBackend("");
+        setMessage("");
+    };
 
     
     useEffect(() => {
@@ -50,7 +59,9 @@ function UserProviderWrapper(props) {
 
         const currentLang = getSavedLang();
         const language = currentLang.UserFunctions;
-        
+
+        limpiarFeedback();
+
         // Llamada a la API de Laravel (BackEnd)
         try {
             const response = await fetch(`${API_URL}/api/login`, {
@@ -122,6 +133,8 @@ function UserProviderWrapper(props) {
         const lang = getSavedLang();
         const language = lang.UserFunctions;
 
+        limpiarFeedback();
+
         //const response = await axios.post("http://localhost:8000/api/signup", {user});
         // Llamada al Back End (Laravel)
         try {
@@ -189,9 +202,7 @@ function UserProviderWrapper(props) {
         const lang = getSavedLang();
         const language = lang.UserFunctions;
 
-        setError("");
-        setErrorBackend("");
-        setMessage("");
+        limpiarFeedback();
 
         try {
             const response = await fetch(`${API_URL}/api/forgot-password`, {
@@ -229,9 +240,7 @@ function UserProviderWrapper(props) {
         const lang = getSavedLang();
         const language = lang.UserFunctions;
 
-        setError("");
-        setErrorBackend("");
-        setMessage("");
+        limpiarFeedback();
 
         try {
             const response = await fetch(`${API_URL}/api/reset-password`, {
@@ -269,6 +278,9 @@ function UserProviderWrapper(props) {
         const lang = getSavedLang();
         const language = lang.UserFunctions;
 
+        setError("");
+        setErrorBackend("");
+
         try {
             const response = await fetch(`${API_URL}/api/user`, {
                 method: "GET",
@@ -295,8 +307,12 @@ function UserProviderWrapper(props) {
                 id: data.id,
                 nickname: data.nickname,
                 email: data.email,
-                foto_perfil: data.foto_perfil
+                foto_perfil: data.foto_perfil,
+                rol: data.rol
             });
+
+            setError("");
+            setErrorBackend("");
 
             console.log(`${language.okGetDataUserLogged}`);
 
@@ -315,6 +331,8 @@ function UserProviderWrapper(props) {
 
         const lang = getSavedLang();
         const language = lang.UserFunctions;
+
+        limpiarFeedback();
 
         try {
             const response = await fetch(`${API_URL}/api/perfil`, {
@@ -356,6 +374,8 @@ function UserProviderWrapper(props) {
 
         const lang = getSavedLang();
         const language = lang.UserFunctions;
+
+        limpiarFeedback();
 
         try {
             const response = await fetch(`${API_URL}/api/perfil/password`, {

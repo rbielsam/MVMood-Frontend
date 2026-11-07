@@ -11,32 +11,36 @@ export function usePosts() {
 
     const {lang} = useContext(LanguageContext);
     const language = lang.errorPosts;
-    const {token, error, setError, message, setMessage} = useContext(UserContext);
+    const {token} = useContext(UserContext);
     const [publicaciones, setPublicaciones] = useState([]);
-    const redirectPath = "/home";
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
+
+
+    // Limpia los mensajes de la acción anterior
+    const limpiarFeedback = () => {
+        setError("");
+        setMessage("");
+    };
 
 
     // Función para obtener los POSTS
     const getPosts = async () => {
-        try {
-            //console.log("Token que se envia: ", token);
+        limpiarFeedback();
 
+        try {
             const response = await fetch(`${API_URL}/api/home`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
-                    //"Content-Type": "application/json",
                     "Accept": "application/json"
-                },
-                //body: JSON.stringify({contenido})           
+                }
             });
 
             const result = await response.json();
-            //console.log(result.data);
-            
+
             if (!response.ok) {
-                //throw new Error("No se pueden cargar las peticiones");
-                const errorResponse = data.message;
+                const errorResponse = result.message;
                 console.error(`${language.errorServerLoadPosts} ${errorResponse}`);
                 setError(`${language.errorServerLoadPosts} ${errorResponse}`);
 
@@ -45,27 +49,28 @@ export function usePosts() {
 
             setPublicaciones(result);
             console.log(`${language.okLoadPosts}`);
+            return result;
 
         } catch (err) {
-            console.log(`${language.errorServerConnectionPosts} ${err}`);
-            setError(`${language.errorServerConnectionPosts} ${err}`);
+            console.error(`${language.errorServerConnectionPosts} ${err.message}`);
+            setError(`${language.errorServerConnectionPosts} ${err.message}`);
+            return {error: err.message};
         }
     };
 
-    
+
     // Función para crear POSTS
-    const create = async (formData/*contenido*/) => {
+    const create = async (formData) => {
+        limpiarFeedback();
 
         try {
-            const response = await fetch(`${API_URL}/api/create`, {                
+            const response = await fetch(`${API_URL}/api/create`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
-                    //"Content-Type": "application/json",
                     "Accept": "application/json"
                 },
-                //body: JSON.stringify({formData/*contenido*/})    
-                body: formData       
+                body: formData
             });
 
             const data = await response.json();
@@ -74,26 +79,26 @@ export function usePosts() {
                 const errorResponse = data.message;
                 console.error(`${language.errorServerCreatePost} ${errorResponse}`);
                 setError(`${language.errorServerCreatePost} ${errorResponse}`);
+
+                return {error: errorResponse};
             }
 
-            else {
-                console.log(`${language.okCreatePost}`);
-                setMessage(`${language.okCreatePost}`);
-                return data;
-            }
-        
+            console.log(`${language.okCreatePost}`);
+            setMessage(`${language.okCreatePost}`);
+            return data;
+
         } catch (err) {
             console.error(`${language.errorServerConnectionPosts} ${err.message}`);
             setError(`${language.errorServerConnectionPosts} ${err.message}`);
+            return {error: err.message};
         }
-
     };
 
 
     // Función para eliminar POSTS
     const del = async (id) => {
+        limpiarFeedback();
 
-        // Llamada al BackEnd (Laravel)
         try {
             const response = await fetch(`${API_URL}/api/publicaciones/${id}`, {
                 method: "DELETE",
@@ -110,36 +115,35 @@ export function usePosts() {
                 const errorResponse = data.message;
                 console.error(`${language.errorServerDeletePost} ${errorResponse}`);
                 setError(`${language.errorServerDeletePost} ${errorResponse}`);
+
+                return {error: errorResponse};
             }
 
-            else {
-                console.log(`${language.okDeletePost}`);
-                setMessage(`${language.okDeletePost}`);
-                return data;
-            }
+            console.log(`${language.okDeletePost}`);
+            setMessage(`${language.okDeletePost}`);
+            return data;
 
         } catch (err) {
             console.error(`${language.errorServerConnectionPosts} ${err.message}`);
             setError(`${language.errorServerConnectionPosts} ${err.message}`);
+            return {error: err.message};
         }
-
     };
 
 
     // Función para editar POSTS
-    const update = async (postId, formData/*contenido*/) => {
+    const update = async (postId, formData) => {
+        limpiarFeedback();
 
-        formData.append("_method", "PUT")
-        // Llamada al BackEnd (Laravel)
+        formData.append("_method", "PUT");
+
         try {
             const response = await fetch(`${API_URL}/api/publicaciones/${postId}`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
-                    //"Content-Type": "application/json",
                     "Accept": "application/json"
                 },
-                //body: JSON.stringify({ formData/*contenido*/ })
                 body: formData
             });
 
@@ -149,19 +153,20 @@ export function usePosts() {
                 const errorResponse = data.message;
                 console.error(`${language.errorServerUpdatePost} ${errorResponse}`);
                 setError(`${language.errorServerUpdatePost} ${errorResponse}`);
-                return;
+
+                return {error: errorResponse};
             }
 
             console.log(`${language.okUpdatePost}`);
-            //setMessage(`${language.okUpdatePost}`);
             return data;
 
         } catch (err) {
             console.error(`${language.errorServerConnectionPosts} ${err.message}`);
             setError(`${language.errorServerConnectionPosts} ${err.message}`);
+            return {error: err.message};
         }
     };
 
 
-    return {getPosts, create, del, update, publicaciones};
+    return {getPosts, create, del, update, publicaciones, error, message};
 }

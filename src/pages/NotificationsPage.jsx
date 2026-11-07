@@ -5,13 +5,13 @@ import { LanguageContext } from '../contexts/language.context';
 
 export default function NotificationsPage({ data }) {
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
+    const {lang} = useContext(LanguageContext);
     //const language = lang.content.NotificationsPage;
     const language = lang.NotificationsPage;
 
     return (
         <>
-            {data?.mensaje && <p className="ok">{data.mensaje}</p>}
+            {data?.mensaje && <p className="message">{data.mensaje}</p>}
             {data?.error && <p className="error">{data.error}</p>}
 
             <h2>{language.notifications}</h2>

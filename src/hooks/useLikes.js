@@ -1,4 +1,4 @@
-import { use, useContext } from "react";
+import { useContext } from "react";
 import { UserContext } from "../contexts/user.context";
 import { LanguageContext } from '../contexts/language.context';
 
@@ -9,10 +9,12 @@ export function useLikes () {
     
     const {token, setError} = useContext(UserContext);
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
+    const {lang} = useContext(LanguageContext);
     const language = lang.errorLikes;
 
     const like = async (uuid)  => {
+        setError("");
+
         try{
             const response = await fetch(`${API_URL}/api/publicaciones/${uuid}/like`, {
                 method: "POST",

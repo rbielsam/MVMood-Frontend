@@ -57,6 +57,7 @@ const en = {
         no_posts: 'No posts yet.',
         create_post: "Create Post",
         cancel: "cancel",
+        adminCannotPost: "Administrators cannot create posts."
     },
 
     CreatePostForm: {

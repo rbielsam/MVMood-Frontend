@@ -56,7 +56,8 @@ const es = {
     HomePage: {
         no_posts: 'No hay publicaciones todavía. ¡Sé el primero en publicar!',
         create_post: "Nueva publicación",
-        cancel: "Cancelar"
+        cancel: "Cancelar",
+        adminCannotPost: "Los administradores no pueden crear publicaciones."
     },
 
     CreatePostForm: {

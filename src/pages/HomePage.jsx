@@ -16,12 +16,13 @@ import HeaderLogged from "../components/HeaderLogged";
 
 export default function HomePage() {
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
+    const {lang} = useContext(LanguageContext);
     const language = lang.HomePage;
 
-    const {user, getDataLoggedUser, error, setError} = useContext(UserContext);
+    const {user, error} = useContext(UserContext);
     const [showCreatePost, setShowCreatePost] = useState(false);
-    const {getPosts, create, publicaciones, update, del} = usePosts();
+    const [postFeedback, setPostFeedback] = useState("");
+    const {getPosts, publicaciones, update, del, error: postsError, message: postsMessage} = usePosts();
     const {like} = useLikes();
     const {getComments, createComment} = useComments();
 
@@ -37,21 +38,34 @@ export default function HomePage() {
     }, [publicaciones]);
 
     const onCreated = () => {
+        setPostFeedback(lang.errorPosts.okCreatePost);
         getPosts();
         setShowCreatePost(false);
     }
 
+    const toggleCreatePost = () => {
+        setPostFeedback("");
+        setShowCreatePost(!showCreatePost);
+    }
+
     return (
         <>
-            {publicaciones?.mensaje && <p className="ok">{publicaciones.mensaje}</p>}
-            {publicaciones?.error && <p className="error">{publicaciones.error}</p>} 
+            {postsMessage && <p className="message">{postsMessage}</p>}
+            {postsError && <p className="error">{postsError}</p>}
+            {postFeedback && <p className="message">{postFeedback}</p>}
             {error && (<p className="error">{error}</p>)}
 
-            <Button className={showCreatePost ? "buttonCancel" : ""} onClick={() => setShowCreatePost(!showCreatePost)}>
+            <Button className={showCreatePost ? "buttonCancel" : ""} onClick={toggleCreatePost}>
                 {showCreatePost ? `${language.cancel}` : `${language.create_post}`}
             </Button>
 
-            {showCreatePost && (<CreatePostForm onCreated={onCreated} />)}
+            {showCreatePost && (
+                user?.rol === "admin" ? (
+                    <p className="error">{language.adminCannotPost}</p>
+                ) : (
+                    <CreatePostForm onCreated={onCreated} />
+                )
+            )}
 
             {!publicaciones?.data || publicaciones.data.length === 0 ? (
                 <div className="post">

@@ -9,11 +9,13 @@ export function useComments () {
 
     const {token, setError} = useContext(UserContext);
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
+    const {lang} = useContext(LanguageContext);
     const language = lang.errorComments;
 
     // Función para obtener los comentarios de un post
     const getComments = async (uuid) => {
+        setError("");
+
         try {
             const response = await fetch(`${API_URL}/api/publicaciones/${uuid}/comentarios`, {
                 method: "GET",
@@ -45,6 +47,8 @@ export function useComments () {
 
     // Función para guardar comentario de un POST
     const createComment = async (uuid, contenido) => {
+        setError("");
+
         try {
             const response = await fetch(`${API_URL}/api/publicaciones/${uuid}/comentarios`, {
                 method: "POST",

@@ -17,8 +17,42 @@ body {
     font-size: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem);
 }
 
+.error,
+.message,
+.ok {
+    margin: 10px 0;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
 .error {
-    color: red;
+    background-color: #fdecea;
+    color: #7f1d1d;
+    border-color: #f5c2c0;
+}
+
+.message,
+.ok {
+    background-color: #e6f4ea;
+    color: #14532d;
+    border-color: #b7dfc4;
+}
+
+.dark .error {
+    background-color: #3b1d1d;
+    color: #ffb4ab;
+    border-color: #8a3b36;
+}
+
+.dark .message,
+.dark .ok {
+    background-color: #16311f;
+    color: #b7f0c8;
+    border-color: #2f6b45;
 }
 
 a {
@@ -209,15 +243,6 @@ a:hover {
 .create-post button:hover {
     background-color: #0056b3;
 }*/
-
-.message {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    border-radius: 4px;
-}
 
 .post-preview {
     display: none;

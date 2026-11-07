@@ -1,6 +1,5 @@
 import '../indexLogged.css';
 import { useState, useContext } from 'react';
-import {UserContext} from "../contexts/user.context";
 import { LanguageContext } from '../contexts/language.context';
 import Button from '../components/Button';
 import { usePosts } from '../hooks/usePosts';
@@ -9,16 +8,14 @@ import AttachIcon from './AttachIcon';
 
 export default function CreatePostForm({ onCreated }) {
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
-    //const language = lang.content.CreatePostForm;
+    const {lang} = useContext(LanguageContext);
     const language = lang.CreatePostForm;
-    
-    const [contenido, setContenido] = useState("");
+    const {create, error} = usePosts();
 
-    const {error, setError, token} = useContext(UserContext);
-    const {create} = usePosts();
+    const [contenido, setContenido] = useState("");
     const [imagen, setImagen] = useState(null);
     const [urlImagen, setUrlImagen] = useState(null);
+    const [enviando, setEnviando] = useState(false);
 
 
     const handleSubmit = async (e) => {
@@ -30,24 +27,26 @@ export default function CreatePostForm({ onCreated }) {
 
         if (imagen) formData.append("imagen", imagen);
 
+        setEnviando(true);
         const response = await create(formData);
+        setEnviando(false);
 
-        //const response = await create(contenido);
-
+        // Si falla, se conservan el texto y la imagen para poder reintentar
         if (response?.error) {
             return;
         }
-        
+
         setContenido("");
         setImagen(null);
         setUrlImagen(null);
-        onCreated();
-
+        onCreated(response);
     };
+
 
     const handleContenido = (e) => {
         setContenido(e.target.value);
     };
+
 
     const handleChangeImagen = (e) => {
         const imagen = e.target.files[0];
@@ -60,10 +59,7 @@ export default function CreatePostForm({ onCreated }) {
         readUrl.onload = (e) => setUrlImagen(e.target.result);
         readUrl.readAsDataURL(imagen);
     };
-/*
-                    {data?.mensaje && <p className="ok">{data.mensaje}</p>}
-                    {data?.error && <p className="error">{data.error}</p>}
-*/
+
 
     return (
         <>
@@ -71,6 +67,8 @@ export default function CreatePostForm({ onCreated }) {
                 <h2>{language.create}</h2>
 
                 <form onSubmit={handleSubmit}>
+                    {error && <p className="error">{error}</p>}
+
                     <textarea
                         name="contenido"
                         placeholder={language.share_your_updates}
@@ -83,13 +81,12 @@ export default function CreatePostForm({ onCreated }) {
                         <AttachIcon />
                     </label>
                     <input id="createPostAddImage" type="file" name="imagen" onChange={handleChangeImagen} style={{display:"none"}} />
-                    {/*<input type="file" name="imagen" onChange={(e) => {console.log("Imagen: ", e); setImagen(e.target.files[0])}} />*/}
 
                     {urlImagen && (
                         <img src={urlImagen} alt="Url Imagen" className="attachUrlImagen" />
                     )}
 
-                    <Button>{language.send}</Button>
+                    <Button disabled={enviando}>{language.send}</Button>
                 </form>
             </div>
         </>

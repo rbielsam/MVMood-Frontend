@@ -56,7 +56,8 @@ const cat = {
     HomePage: {
         no_posts: 'No hi ha publicacions encara. Sigues el primer en publicar!',
         create_post: "Nova publicació",
-        cancel: "Cancel·lar"
+        cancel: "Cancel·lar",
+        adminCannotPost: "Els administradors no poden crear publicacions."
     },
 
     CreatePostForm: {
