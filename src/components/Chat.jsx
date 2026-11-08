@@ -4,7 +4,7 @@ import { LanguageContext } from '../contexts/language.context';
 import "../indexChat.css";
 
 
-export default function Chat({ selectedChat, onBack, currentUser, onChatCreated }) {
+export default function Chat({ selectedChat, onBack, currentUser, onChatCreated, onMessageSent }) {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -122,6 +122,8 @@ export default function Chat({ selectedChat, onBack, currentUser, onChatCreated 
                 const yaExiste = prev.some(m => m.uuid === data.mensaje.uuid);
                 return yaExiste ? prev : [...prev, data.mensaje];
             });
+
+            onMessageSent?.();
         } catch (error) {
             setNuevoMensaje(texto);
             console.error(`${errorLanguage.errorServerConnectionChat} ${error}`);

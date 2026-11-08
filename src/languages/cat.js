@@ -111,6 +111,10 @@ const cat = {
         chats: "Chats"
     },
 
+    ChatNotifications: {
+        unread_messages: "Missatges sense llegir"
+    },
+
     Chat: {
         back: "Enrere",
         send: "Envia"

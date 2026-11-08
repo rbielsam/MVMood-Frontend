@@ -1,14 +1,17 @@
 import '../indexLogged.css';
 import { useContext } from 'react';
 import { LanguageContext } from '../contexts/language.context';
+import { ChatNotificationsContext } from '../contexts/chatNotifications.context';
+import UnreadBadge from './UnreadBadge';
 import { Link } from "react-router-dom";
 
 
 export default function Sidebar({ isOpen = false, onClose }) {
 
-    const {translations, lang, setLang} = useContext(LanguageContext);
+    const { lang } = useContext(LanguageContext);
     //const language = lang.content.Sidebar;
     const language = lang.Sidebar;
+    const { totalUnread } = useContext(ChatNotificationsContext);
 
     const logOut = () => {
         localStorage.removeItem("token");
@@ -28,7 +31,10 @@ export default function Sidebar({ isOpen = false, onClose }) {
             <Link to="/home" onClick={handleNavigate}>{language.home}</Link>
             <Link to="/profile" onClick={handleNavigate}>{language.profile}</Link>
             <Link to="/notifications" onClick={handleNavigate}>{language.notifications}</Link>            
-            <Link to="/chat" onClick={handleNavigate}>{language.chat}</Link>
+            <Link to="/chat" onClick={handleNavigate} className="sidebar-chat-link">
+                <span>{language.chat}</span>
+                {totalUnread > 0 && <UnreadBadge count={totalUnread} />}
+            </Link>
 
             <div className="logout">
                 <a onClick={logOut} href="/">{language.logout}</a>

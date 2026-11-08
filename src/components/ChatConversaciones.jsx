@@ -1,55 +1,27 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { LanguageContext } from '../contexts/language.context';
+import { ChatNotificationsContext } from '../contexts/chatNotifications.context';
 import defaultAvatar from "../assets/icons/default-avatar.svg";
+import UnreadBadge from './UnreadBadge';
 import "../indexChat.css";
 
 
-export default function ChatConversaciones({ onSelectChat, currentUser, refreshKey = 0, onChatsLoaded }) {
+export default function ChatConversaciones({ onSelectChat, currentUser }) {
 
     const API_URL = import.meta.env.VITE_API_URL;
 
     const { lang } = useContext(LanguageContext);
     const language = lang.ConversacionesChat;
-    const errorLanguage = lang.errorChat;
-
-    const [chats, setChats] = useState([]);
-    const [cargando, setCargando] = useState(true);
-
-    useEffect(() => {
-        const fetchChats = async () => {
-            try {
-                const res = await fetch(`${API_URL}/api/chats`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Accept': 'application/json'
-                    }
-                });
-                const data = await res.json();
-
-                if (!res.ok || !Array.isArray(data)) {
-                    console.error(`${errorLanguage.errorConversacionesChat} ${data.message ?? res.status}`);
-                    setChats([]);
-                    onChatsLoaded?.([]);
-                    return;
-                }
-
-                setChats(data);
-                onChatsLoaded?.(data);
-            } catch (err) {
-                console.error(`${errorLanguage.errorServerConnectionChat} ${err}`);
-            } finally {
-                setCargando(false);
-            }
-        };
-
-        fetchChats();
-    }, [refreshKey, onChatsLoaded, API_URL, errorLanguage.errorConversacionesChat, errorLanguage.errorServerConnectionChat]);
+    const { chats, unreadByChat, cargando, error } = useContext(ChatNotificationsContext);
 
     return (
 
         <div className="messages-main">
 
             <h2>{language.conversations}</h2>
+
+            {error && <p className="error">{error}</p>}
+
             {cargando ? (
                 <p>{language.loading_conversations}</p>
             ) : chats.length === 0 ? (
@@ -66,6 +38,8 @@ export default function ChatConversaciones({ onSelectChat, currentUser, refreshK
                                 : `${API_URL}/storage/${receptor.foto_perfil}`)
                             : defaultAvatar;
 
+                        const sinLeer = unreadByChat[chat.id] ?? 0;
+
                         return (
 
                             <div
@@ -78,6 +52,7 @@ export default function ChatConversaciones({ onSelectChat, currentUser, refreshK
                                     <h4>{receptor.nickname}</h4>
                                     <p className="preview">{chat.ultimo_mensaje?.contenido || `${language.no_messages_yet}`}</p>
                                 </div>
+                                {sinLeer > 0 && <UnreadBadge count={sinLeer} />}
                             </div>
                         );
                     })}

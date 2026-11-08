@@ -169,6 +169,43 @@ a:hover {
     font-weight: bold;
 }
 
+.sidebar a.sidebar-chat-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.chat-unread-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 7px 3px 5px;
+    border-radius: 999px;
+    background-color: #d93025;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+    max-width: 100%;
+}
+
+.chat-unread-badge-icon {
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+}
+
+.chat-unread-badge-count {
+    font-variant-numeric: tabular-nums;
+}
+
+.dark .chat-unread-badge {
+    background-color: #ff8a80;
+    color: #3b1d1d;
+}
+
 .dark .sidebar a {
     color: #f1f1f1;
 }

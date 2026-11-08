@@ -112,6 +112,10 @@ const en = {
         chats: "chats"
     },
 
+    ChatNotifications: {
+        unread_messages: "Unread messages"
+    },
+
     Chat: {
         back: "back",
         send: "send"

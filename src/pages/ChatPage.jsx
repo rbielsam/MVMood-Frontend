@@ -1,6 +1,7 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../contexts/user.context.jsx';
 import { LanguageContext } from '../contexts/language.context.jsx';
+import { ChatNotificationsContext } from '../contexts/chatNotifications.context.jsx';
 import '../indexChat.css';
 import ChatConversaciones from '../components/ChatConversaciones.jsx';
 import Chat from '../components/Chat.jsx';
@@ -13,32 +14,49 @@ export default function ChatPage() {
     const language = lang.ChatPage;
 
     const { user: currentUser, error } = useContext(UserContext);
+    const { chats, refreshChats, setActiveChat } = useContext(ChatNotificationsContext);
     const [chatSeleccionado, setChatSeleccionado] = useState(null);
-    const [conversaciones, setConversaciones] = useState([]);
-    const [refreshKey, setRefreshKey] = useState(0);
+
+    useEffect(() => {
+        return () => setActiveChat(null);
+    }, [setActiveChat]);
 
     const startChatWithUser = (selectedUser) => {
         if (!currentUser?.id) return;
 
-        const existente = conversaciones.find((chat) =>
+        const existente = chats.find((chat) =>
             chat.usuarios?.some((usuario) => usuario.id === selectedUser.id)
         );
 
-        setChatSeleccionado(existente ?? {
+        const chat = existente ?? {
             id: null,
             usuarios: [currentUser, selectedUser],
             ultimo_mensaje: null,
-        });
+        };
+
+        setChatSeleccionado(chat);
+        setActiveChat(chat.id);
+    };
+
+    const handleSelectChat = (chat) => {
+        setChatSeleccionado(chat);
+        setActiveChat(chat?.id ?? null);
     };
 
     const handleChatCreated = (chat) => {
         setChatSeleccionado(chat);
-        setRefreshKey((key) => key + 1);
+        setActiveChat(chat.id);
+        refreshChats();
     };
 
     const handleBack = () => {
         setChatSeleccionado(null);
-        setRefreshKey((key) => key + 1);
+        setActiveChat(null);
+        refreshChats();
+    };
+
+    const handleMessageSent = () => {
+        refreshChats();
     };
 
     const receptorBorrador = chatSeleccionado?.usuarios?.find(
@@ -60,9 +78,7 @@ export default function ChatPage() {
                     <div className="chat-left-chats">
                         <ChatConversaciones
                             currentUser={currentUser}
-                            refreshKey={refreshKey}
-                            onChatsLoaded={setConversaciones}
-                            onSelectChat={setChatSeleccionado}
+                            onSelectChat={handleSelectChat}
                         />
                     </div>
                 </div>
@@ -75,6 +91,7 @@ export default function ChatPage() {
                             currentUser={currentUser}
                             onBack={handleBack}
                             onChatCreated={handleChatCreated}
+                            onMessageSent={handleMessageSent}
                         />
                     ) : (
                         <div className="chat-placeholder">

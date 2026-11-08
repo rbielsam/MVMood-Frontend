@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import HeaderLogged from './HeaderLogged';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import { ChatNotificationsProvider } from '../contexts/chatNotifications.context';
 import '../indexLogged.css';
 
 export default function ProtectedLayout() {
@@ -27,7 +28,7 @@ export default function ProtectedLayout() {
     const closeSidebar = () => setSidebarOpen(false);
 
     return (
-        <>
+        <ChatNotificationsProvider>
             <HeaderLogged onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
             {sidebarOpen && <div className="sidebar-backdrop" onClick={closeSidebar} aria-hidden="true" />}
             <div className={`container${isChat ? ' container--chat' : ''}`}>
@@ -37,6 +38,6 @@ export default function ProtectedLayout() {
                 </div>
             </div>
             <Footer />
-        </>
+        </ChatNotificationsProvider>
     );
 }

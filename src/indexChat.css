@@ -46,6 +46,15 @@
     font-weight: 600;
 }
 
+.message-item .message-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.message-item .chat-unread-badge {
+    margin-left: auto;
+}
+
 .preview {
     margin-top: 3px;
     font-size: 14px;

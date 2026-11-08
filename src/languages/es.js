@@ -111,6 +111,10 @@ const es = {
         chats: "Chats"
     },
 
+    ChatNotifications: {
+        unread_messages: "Mensajes sin leer"
+    },
+
     Chat: {
         back: "Volver",
         send: "Enviar"
