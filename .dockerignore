@@ -1,0 +1,12 @@
+.git
+.gitignore
+.agents
+AGENTS.md
+opencode.json
+.env
+.env.*
+node_modules
+dist
+dist-ssr
+*.local
+README.md

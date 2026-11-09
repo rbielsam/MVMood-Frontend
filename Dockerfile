@@ -1,0 +1,27 @@
+# syntax=docker/dockerfile:1
+
+FROM node:22-alpine AS build
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
+ARG VITE_API_URL
+ARG VITE_PUSHER_APP_KEY
+ARG VITE_PUSHER_APP_CLUSTER=eu
+
+RUN test -n "$VITE_API_URL" \
+    && test -n "$VITE_PUSHER_APP_KEY" \
+    && test -n "$VITE_PUSHER_APP_CLUSTER"
+
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
